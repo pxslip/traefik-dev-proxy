@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    env_file:
+      - vars.env
+    # The official v2 Traefik docker image
+    image: traefik:v2.5
+    ports:
+      # The HTTP/S ports
+      - '80:80'
+      - '443:443'
+      # The Web UI (enabled by --api.insecure=true)
+      - '2000:8080'
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./certs:/etc/certs
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./config.yml:/etc/traefik/config.yml
+    restart: unless-stopped
+    networks:
+      - traefik
+networks:
+  traefik:
+    name: traefik

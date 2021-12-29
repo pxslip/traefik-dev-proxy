@@ -1,0 +1,23 @@
+accessLog: {}
+log: {}
+api:
+  insecure: true
+  dashboard: true
+  debug: true
+providers:
+  docker:
+    network: traefik
+  file:
+    filename: /etc/traefik/config.yml
+entryPoints:
+  http:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: https
+          scheme: https
+  https:
+    address: ":443"
+    http:
+      tls: {}
