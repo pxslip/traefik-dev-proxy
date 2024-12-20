@@ -4,14 +4,15 @@ services:
   reverse-proxy:
     env_file:
       - vars.env
-    # The official v2 Traefik docker image
-    image: traefik:v2.5
+    # The official Traefik image
+    image: traefik:v3
     ports:
       # The HTTP/S ports
       - '80:80'
       - '443:443'
       # The Web UI (enabled by --api.insecure=true)
       - '2000:8080'
+      - '5432:5432'
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -20,7 +21,10 @@ services:
       - ./config.yml:/etc/traefik/config.yml
     restart: unless-stopped
     networks:
-      - traefik
+      traefik:
+        aliases:
+          - ollama.traefik.localhost
+          - postgres.traefik.localhost
 networks:
   traefik:
     name: traefik

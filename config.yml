@@ -11,6 +11,27 @@ http:
           - main: "traefik.localhost"
             sans:
               - "*.traefik.localhost"
+          - main: "dev.localhost"
+            sans:
+              - "*.dev.localhost"
+    ollama:
+      rule: "Host(`ollama.traefik.localhost`)"
+      service: "ollama@file"
+      middlewares:
+        - "set-ollama-host"
+      entryPoints:
+        - http
+        - https
+  services:
+    ollama:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:11434"
+  middlewares:
+    set-ollama-host:
+      headers:
+        customRequestHeaders:
+          Host: "localhost:11434"
 
 tls:
   certificates:

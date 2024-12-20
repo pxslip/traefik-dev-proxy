@@ -1,0 +1,25 @@
+name: postgres
+services:
+  postgres:
+    image: postgres:14
+    restart: unless-stopped
+    ports:
+      - "5432"
+    environment:
+      - POSTGRES_PASSWORD=secret
+    networks:
+      - traefik
+    labels:
+      - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.postgres.entrypoints=postgres"
+      - "traefik.tcp.routers.postgres.tls=true"
+      - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
+      - "traefik.docker.network=traefik"
+    volumes:
+      - postgres:/data/postgres
+volumes:
+  postgres:
+networks:
+  traefik:
+    name: traefik
+    external: true
